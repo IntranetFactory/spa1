@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { MaskInput } from "@/components/ui/mask-input"
 import {
   Card,
   CardContent,
@@ -21,6 +22,7 @@ const formatTime = (date: Date) => {
 
 function Welcome() {
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [percentValue, setPercentValue] = useState("")
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -54,6 +56,24 @@ function Welcome() {
             modern and accessible UI components below.
           </AlertDescription>
         </Alert>
+
+        {/* Percent Input */}
+        <div className="flex flex-col gap-2 max-w-xs">
+          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Percent Input
+          </label>
+          <MaskInput
+            mask="percentage"
+            placeholder="0%"
+            value={percentValue}
+            onValueChange={(masked) => setPercentValue(masked)}
+          />
+          {percentValue && (
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Value: {percentValue}
+            </p>
+          )}
+        </div>
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
