@@ -9,6 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {
+  Gauge,
+  GaugeIndicator,
+  GaugeLabel,
+  GaugeRange,
+  GaugeTrack,
+  GaugeValueText,
+} from "@/components/ui/gauge"
 
 const formatTime = (date: Date) => {
   return date.toLocaleTimeString('en-US', {
@@ -19,8 +27,15 @@ const formatTime = (date: Date) => {
   })
 }
 
+function getGaugeColor(value: number): string {
+  if (value <= 100 / 3) return "text-red-500"
+  if (value <= (100 * 2) / 3) return "text-yellow-500"
+  return "text-green-500"
+}
+
 function Welcome() {
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [gaugeValue, setGaugeValue] = useState(50)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -130,6 +145,59 @@ function Welcome() {
             </CardFooter>
           </Card>
         </div>
+
+        {/* Gauge Demo */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Gauge</CardTitle>
+            <CardDescription>
+              Interactive gauge component from{" "}
+              <a
+                href="https://www.diceui.com/docs/components/radix/gauge"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                diceui.com
+              </a>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-6">
+            <Gauge value={gaugeValue} size={160} thickness={14}>
+              <GaugeIndicator>
+                <GaugeTrack />
+                <GaugeRange className={getGaugeColor(gaugeValue)} />
+              </GaugeIndicator>
+              <GaugeValueText className={getGaugeColor(gaugeValue)} />
+              <GaugeLabel>Value</GaugeLabel>
+            </Gauge>
+            <div className="flex items-center gap-3 w-full max-w-xs">
+              <label htmlFor="gauge-input" className="text-sm font-medium whitespace-nowrap">
+                Value (0–100)
+              </label>
+              <input
+                id="gauge-input"
+                type="number"
+                min={0}
+                max={100}
+                value={gaugeValue}
+                onChange={(e) => {
+                  const v = Math.min(100, Math.max(0, Number(e.target.value)))
+                  setGaugeValue(v)
+                }}
+                className="w-24 rounded-md border border-input bg-background px-3 py-1.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={gaugeValue}
+                onChange={(e) => setGaugeValue(Number(e.target.value))}
+                className="flex-1"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Action Buttons */}
         <div className="flex justify-center gap-4">
