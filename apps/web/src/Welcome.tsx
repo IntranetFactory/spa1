@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Gauge } from "@/components/ui/gauge"
 
 const formatTime = (date: Date) => {
   return date.toLocaleTimeString('en-US', {
@@ -19,8 +20,12 @@ const formatTime = (date: Date) => {
   })
 }
 
+const GAUGE_MIN = 0
+const GAUGE_MAX = 100
+
 function Welcome() {
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [gaugeValue, setGaugeValue] = useState(50)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -130,6 +135,56 @@ function Welcome() {
             </CardFooter>
           </Card>
         </div>
+
+        {/* Gauge Demo */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Gauge</CardTitle>
+            <CardDescription>
+              Interactive gauge component from{" "}
+              <a
+                href="https://www.diceui.com/docs/components/radix/gauge"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-primary"
+              >
+                diceui.com
+              </a>
+              . Red ≤ 33, Yellow ≤ 67, Green &gt; 67.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-6">
+            <Gauge value={gaugeValue} min={GAUGE_MIN} max={GAUGE_MAX} size={180} strokeWidth={16} label="/ 100" />
+            <div className="flex items-center gap-3 w-full max-w-xs">
+              <label
+                htmlFor="gauge-input"
+                className="text-sm font-medium shrink-0"
+              >
+                Value (0–100)
+              </label>
+              <input
+                id="gauge-input"
+                type="number"
+                min={GAUGE_MIN}
+                max={GAUGE_MAX}
+                value={gaugeValue}
+                onChange={(e) => {
+                  const v = Math.min(GAUGE_MAX, Math.max(GAUGE_MIN, Number(e.target.value)))
+                  setGaugeValue(v)
+                }}
+                className="flex-1 border border-input rounded-md px-3 py-1.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+            <input
+              type="range"
+              min={GAUGE_MIN}
+              max={GAUGE_MAX}
+              value={gaugeValue}
+              onChange={(e) => setGaugeValue(Number(e.target.value))}
+              className="w-full max-w-xs accent-primary"
+            />
+          </CardContent>
+        </Card>
 
         {/* Action Buttons */}
         <div className="flex justify-center gap-4">
