@@ -9,6 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {
+  Gauge,
+  GaugeIndicator,
+  GaugeTrack,
+  GaugeRange,
+  GaugeValueText,
+  GaugeLabel,
+} from "@/components/ui/gauge"
 
 const formatTime = (date: Date) => {
   return date.toLocaleTimeString('en-US', {
@@ -19,8 +27,12 @@ const formatTime = (date: Date) => {
   })
 }
 
+const LOW_THRESHOLD = 100 / 3
+const MEDIUM_THRESHOLD = (100 * 2) / 3
+
 function Welcome() {
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [gaugeValue, setGaugeValue] = useState(50)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -29,6 +41,13 @@ function Welcome() {
 
     return () => clearInterval(timer)
   }, [])
+
+  const gaugeColor =
+    gaugeValue <= LOW_THRESHOLD
+      ? "text-red-500"
+      : gaugeValue <= MEDIUM_THRESHOLD
+        ? "text-yellow-500"
+        : "text-green-500"
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-8">
@@ -130,6 +149,51 @@ function Welcome() {
             </CardFooter>
           </Card>
         </div>
+
+        {/* Gauge Demo */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Gauge Demo</CardTitle>
+            <CardDescription>
+              Enter a value between 0 and 100 to see the gauge update
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-6">
+            <Gauge value={gaugeValue} size={160} thickness={12}>
+              <GaugeIndicator>
+                <GaugeTrack />
+                <GaugeRange className={gaugeColor} />
+              </GaugeIndicator>
+              <GaugeValueText className={gaugeColor} />
+              <GaugeLabel>
+                {gaugeValue <= LOW_THRESHOLD
+                  ? "Low"
+                  : gaugeValue <= MEDIUM_THRESHOLD
+                    ? "Medium"
+                    : "High"}
+              </GaugeLabel>
+            </Gauge>
+            <div className="flex items-center gap-3">
+              <label htmlFor="gauge-input" className="text-sm font-medium">
+                Value (0–100):
+              </label>
+              <input
+                id="gauge-input"
+                type="number"
+                min={0}
+                max={100}
+                value={gaugeValue}
+                onChange={(e) => {
+                  const num = Number(e.target.value)
+                  if (!isNaN(num)) {
+                    setGaugeValue(Math.min(100, Math.max(0, num)))
+                  }
+                }}
+                className="w-24 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Action Buttons */}
         <div className="flex justify-center gap-4">

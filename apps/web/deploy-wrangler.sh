@@ -4,7 +4,7 @@ set -e
 # 1. Configuration & Slugs
 REPO_NAME=$(basename -s .git $(git config --get remote.origin.url) | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
 RAW_BRANCH=$(git rev-parse --abbrev-ref HEAD | tr '[:upper:]' '[:lower:]')
-BRANCH_TAG=$(echo "$RAW_BRANCH" | sed 's/[^a-z]//g' | cut -c1-10)_$(date '+%Y%m%d%H%M%S')
+BRANCH_TAG=$(echo "$RAW_BRANCH" | sed 's/[^a-z]//g' | cut -c1-10)-$(date '+%Y%m%d%H%M%S')
 
 # 2. Fetch Cloudflare Workers subdomain
 if [[ -z "$CLOUDFLARE_API_TOKEN" ]]; then
@@ -50,7 +50,7 @@ else
     --tag "$BRANCH_TAG" \
     --message "Preview upload for: $RAW_BRANCH" || { echo "❌ Preview deployment failed" >&2; exit 1; }
 
-  DEPLOY_URL="https://$BRANCH_TAG-$REPO_NAME.$CF_SUBDOMAIN.workers.dev"
+  DEPLOY_URL="https://$BRANCH_TAG.$REPO_NAME.$CF_SUBDOMAIN.workers.dev"
 fi
 
 echo ""
