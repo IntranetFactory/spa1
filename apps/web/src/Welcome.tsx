@@ -27,9 +27,12 @@ const formatTime = (date: Date) => {
   })
 }
 
+const RED_THRESHOLD = 100 / 3
+const YELLOW_THRESHOLD = 200 / 3
+
 function getGaugeColor(value: number): string {
-  if (value <= 100 / 3) return "text-red-500"
-  if (value <= 200 / 3) return "text-yellow-500"
+  if (value <= RED_THRESHOLD) return "text-red-500"
+  if (value <= YELLOW_THRESHOLD) return "text-yellow-500"
   return "text-green-500"
 }
 
@@ -173,7 +176,7 @@ function Welcome() {
             </Gauge>
             <div className="flex items-center gap-3 w-full max-w-xs">
               <label htmlFor="gauge-input" className="text-sm font-medium w-16 shrink-0">
-                Value (0–100)
+                Value
               </label>
               <input
                 id="gauge-input"
@@ -181,12 +184,14 @@ function Welcome() {
                 min={0}
                 max={100}
                 value={gaugeValue}
+                aria-describedby="gauge-range-hint"
                 onChange={(e) => {
                   const v = Math.min(100, Math.max(0, Number(e.target.value)))
                   setGaugeValue(v)
                 }}
                 className="border rounded-md px-3 py-1.5 text-sm w-full"
               />
+              <span id="gauge-range-hint" className="sr-only">Enter a number between 0 and 100</span>
             </div>
           </CardContent>
         </Card>
